@@ -158,6 +158,7 @@ func (c cRun) Index(ctx context.Context, in cRunInput) (out *cRunOutput, err err
 
 func (app *cRunApp) Run(ctx context.Context, outputPath string) {
 	// Rebuild and run the codes.
+	mlog.Print("测试")
 	mlog.Printf("build: %s", app.File)
 
 	// In case of `pipe: too many open files` error.
@@ -195,14 +196,24 @@ func (app *cRunApp) Run(ctx context.Context, outputPath string) {
 	} else {
 		mlog.Printf("build running pid: %d", pid)
 	}
+	mlog.Debug("测试")
 }
 
 func (app *cRunApp) End(ctx context.Context, sig os.Signal, outputPath string) {
 	// Delete the binary file.
 	// firstly, kill the process.
+	mlog.Debug(process)
 	if process != nil {
 		if err := process.Kill(); err != nil {
 			mlog.Debugf("kill process error: %s", err.Error())
+		} else {
+			mlog.Debug("kill process")
+		}
+
+		if err := process.Cmd.Wait(); err != nil {
+			mlog.Debugf("wait kill process error: %s", err.Error())
+		} else {
+			mlog.Debug("wait kill process")
 		}
 	}
 	if err := gfile.Remove(outputPath); err != nil {
